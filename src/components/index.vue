@@ -1,10 +1,10 @@
 <template>
   <div>
     <div class="header" v-if="admin_msg !=''">
-      <div class="user_msg" @click="jump('index_content','后台首页','0')">智云社区后台管理系统</div>
+      <div class="user_msg" @click="jump('index_content','后台首页','0')">至臻珠宝小程序后台管理系统</div>
       <div class="admin_login">
         <p @click="admin_quit()"><span class="el-icon-switch-button"></span>退出</p>
-        <p><span class="el-icon-refresh"></span><a href="http://zhiyun.lilongjin.cn">切换至前台</a></p>
+        <!-- <p><span class="el-icon-refresh"></span><a href="http://zhiyun.lilongjin.cn">切换至前台</a></p> -->
       </div>
     </div>
     <div class="contents" v-if="admin_msg !=''">
@@ -36,7 +36,7 @@
     <div class="login_page" v-if="admin_msg ==''">
       <div class="login_box animated zoomIn">
         <img src="../../static/img/logo2.png" alt="">
-        <h3>智云社区后台管理系统</h3>
+        <h3>至臻珠宝小程序后台管理系统</h3>
         <div>
           <p><span class="el-icon-user"></span>账户</p>
           <input type="text" v-model="login_name" placeholder="账号">
@@ -328,6 +328,7 @@
         width: 40%;
         float: left;
         margin-left: 30%;
+		border-radius: 5px;
       }
       h3{
         width: 100%;
