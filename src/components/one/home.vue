@@ -1,7 +1,7 @@
 <template>
     <div class="admin_index">
       <div class="welcome">
-        <img src="../../../static/img/logo2.png" alt="">
+        <img src="../../../static/img/logo.png" alt="">
         <p>欢迎来到至臻珠宝小程序后台管理系统！</p>
       </div>
     </div>

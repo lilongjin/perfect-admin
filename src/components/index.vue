@@ -1,27 +1,23 @@
 <template>
   <div>
     <div class="header" v-if="admin_msg !=''">
-      <div class="user_msg" @click="jump('index_content','后台首页','0')">至臻珠宝小程序后台管理系统</div>
+      <div class="user_msg" @click="jump('home','后台首页','0')">至臻珠宝小程序后台管理系统</div>
       <div class="admin_login">
         <p @click="admin_quit()"><span class="el-icon-switch-button"></span>退出</p>
-        <!-- <p><span class="el-icon-refresh"></span><a href="http://zhiyun.lilongjin.cn">切换至前台</a></p> -->
       </div>
     </div>
     <div class="contents" v-if="admin_msg !=''">
       <div class="left">
         <div class="admin_msg">
-          <img v-bind:src="admin_msg.userimg" alt="">
-          <p v-if="admin_msg.SuperAdmin&&admin_msg.isAdmin">{{admin_msg.username}}<span>超级管理员</span></p>
-          <p v-if="!admin_msg.SuperAdmin&&admin_msg.isAdmin">{{admin_msg.username}}<span>管理员</span></p>
+          <img src="../../static/img/logo.png" alt="">
+          <p>{{admin_msg.username}}<span>超级管理员</span></p>
         </div>
         <ul>
-          <li v-bind:class="{'ac':ac_index==0}" @click="jump('index_content','后台首页','0')"><span class="el-icon-house"></span>后台首页</li>
-          <li v-bind:class="{'ac':ac_index==1}" @click="jump('user_list','用户管理','1')"><span class="el-icon-user"></span>用户管理</li>
-          <li v-bind:class="{'ac':ac_index==2}" @click="jump('blog_list','博客文章管理','2')"><span class="el-icon-notebook-2"></span>博客文章</li>
-          <li v-bind:class="{'ac':ac_index==3}" @click="jump('question_list','论坛问答管理','3')"><span class="el-icon-chat-dot-round"></span>论坛问答</li>
-          <li v-bind:class="{'ac':ac_index==4}" @click="jump('banner_list','轮播图管理','4')"><span class="el-icon-picture-outline"></span>轮播图</li>
-          <li v-bind:class="{'ac':ac_index==5}" @click="jump('other_content','其他设置','5')"><span class="el-icon-warning-outline"></span>其他设置</li>
-          <li v-bind:class="{'ac':ac_index==6}" @click="jump('system_msg','服务器系统信息','6')"><span class="el-icon-cpu"></span>服务器信息</li>
+          <li v-bind:class="{'ac':ac_index==0}" @click="jump('home','后台首页','0')"><span class="el-icon-s-home"></span>后台首页</li>
+          <li v-bind:class="{'ac':ac_index==1}" @click="jump('category','商品分类管理','1')"><span class="el-icon-notebook-2"></span>商品分类管理</li>
+          <li v-bind:class="{'ac':ac_index==2}" @click="jump('goods','全部商品列表','2')"><span class="el-icon-s-goods"></span>全部商品列表</li>
+		   <li v-bind:class="{'ac':ac_index==3}" @click="jump('goods','轮播商品管理','2')"><span class="el-icon-picture"></span>轮播商品管理</li>
+		   <li v-bind:class="{'ac':ac_index==4}" @click="jump('goods','推荐商品管理','2')"><span class="el-icon-magic-stick"></span>推荐商品管理</li>
         </ul>
       </div>
       <div class="right">
@@ -35,7 +31,7 @@
     </div>
     <div class="login_page" v-if="admin_msg ==''">
       <div class="login_box animated zoomIn">
-        <img src="../../static/img/logo2.png" alt="">
+        <img src="../../static/img/logo.png" alt="">
         <h3>至臻珠宝小程序后台管理系统</h3>
         <div>
           <p><span class="el-icon-user"></span>账户</p>
@@ -79,9 +75,9 @@
       if(admin_id && admin_id !=""){
         this.$axios({
           method:'post',
-          url:'http://zhiyun_server.lilongjin.cn/api/user/userInfo',
+          url:'https://perfect.lilongjin.cn/admin/login_status',
           data:this.qs.stringify({
-            userid:admin_id,
+            id:admin_id,
           })
         }).then((res) => {
           if(res.data.code == 0){
@@ -106,7 +102,7 @@
         if(this.login_name!=''&&this.login_password!=''){
           this.$axios({
             method: 'post',
-            url: 'http://zhiyun_server.lilongjin.cn/admin/login',
+            url: 'https://perfect.lilongjin.cn/admin/login',
             data: this.qs.stringify({
               login_name: this.login_name,
               login_password: this.login_password
