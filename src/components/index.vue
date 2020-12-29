@@ -16,13 +16,12 @@
           <li v-bind:class="{'ac':ac_index==0}" @click="jump('home','后台首页','0')"><span class="el-icon-s-home"></span>后台首页</li>
           <li v-bind:class="{'ac':ac_index==1}" @click="jump('category','商品分类管理','1')"><span class="el-icon-notebook-2"></span>商品分类管理</li>
           <li v-bind:class="{'ac':ac_index==2}" @click="jump('goods','全部商品列表','2')"><span class="el-icon-s-goods"></span>全部商品列表</li>
-		   <li v-bind:class="{'ac':ac_index==3}" @click="jump('goods','轮播商品管理','2')"><span class="el-icon-picture"></span>轮播商品管理</li>
-		   <li v-bind:class="{'ac':ac_index==4}" @click="jump('goods','推荐商品管理','2')"><span class="el-icon-magic-stick"></span>推荐商品管理</li>
+		   <li v-bind:class="{'ac':ac_index==3}" @click="jump('goods','轮播商品管理','3')"><span class="el-icon-picture"></span>轮播商品管理</li>
+		   <li v-bind:class="{'ac':ac_index==4}" @click="jump('goods','推荐商品管理','4')"><span class="el-icon-magic-stick"></span>推荐商品管理</li>
         </ul>
       </div>
       <div class="right">
         <div class="admin_content">
-          <div class="content_header">{{header_title}}</div>
           <div class="content_view">
             <router-view></router-view>
           </div>
@@ -55,19 +54,16 @@
         login_password:"",
         header_title:'首页',
         ac_index:0,
-        admin_msg:''
+        admin_msg:'admin'
       };
     },
     created: function () {
       //设置导航索引
       var ac_index = sessionStorage.getItem("ac_index");
-      var ac_title = sessionStorage.getItem("ac_title");
-      if(ac_index && ac_index !="" && ac_title && ac_title !=""){
+      if(ac_index && ac_index !=""){
         this.ac_index = ac_index;
-        this.header_title = ac_title;
       }else{
         this.ac_index = 0;
-        this.header_title = "后台首页";
       };
       //检查缓存中是否记录了登录状态
       const admin_id = localStorage.getItem("admin_id");
@@ -85,8 +81,10 @@
             this.$store.dispatch("change_admin_msg_f",res.data);
             this.admin_msg = this.$store.getters.adminMsg
           }else{
+			this.admin_msg = "";
             this.$message({
               showClose: true,
+			  duration: 2000,
               message: res.data.message,
               type: 'error'
             });
@@ -94,7 +92,9 @@
         }).catch((error) => {
           console.log(error);
         });
-      };
+      }else{
+		  this.admin_msg = "";
+	  };
     },
     methods: {
       //登录
@@ -111,6 +111,7 @@
             if (res.data.code == 0) {
               this.$message({
                 showClose: true,
+				duration: 2000,
                 message: "登陆成功",
                 type: 'success'
               });
@@ -120,19 +121,14 @@
               localStorage.setItem("admin_id",this.$store.getters.adminMsg._id);
               this.isLogin = true;
               this.admin_msg = this.$store.getters.adminMsg
-            } else if(res.data.code == 3){
-              this.$message({
-                showClose: true,
-                message: res.data.message,
-                type: 'warn'
-              });
-            }else if(res.data.code == 4){
-              this.$message({
-                showClose: true,
-                message: res.data.message,
-                type: 'error'
-              });
-            };
+            } else {
+				this.$message({
+				  showClose: true,
+				  duration: 2000,
+				  message: res.data.message,
+				  type: 'error'
+				});
+			};
           }).catch((error) => {
             console.log(error);
           });
@@ -155,7 +151,6 @@
       //切换路由
       jump(to_url,title,ac_index){
         this.$router.push({ name: `${to_url}`});
-        this.header_title = title;
         this.ac_index = ac_index;
         //缓存导航索引信息
         sessionStorage.setItem("ac_index",ac_index);
@@ -275,27 +270,10 @@
         width: 98%;
         float: left;
 		margin: 1%;
-		
-        .content_header{
+        .content_view{
           width: 100%;
           float: left;
-          height: 3rem;
-          line-height: 3rem;
-          color: @color_lan;
-          cursor: pointer;
-          font-size: 1rem;
-          text-indent: 1rem;
 		  background-color: white;
-		  font-weight: 600;
-		  box-shadow: 0 1px 2px 0 rgba(0,0,0,.1);
-        }
-        .content_view{
-          width: 98%;
-          float: left;
-		  margin-top: 1%;
-		  padding: 1%;
-		  background-color: white;
-		  box-shadow: 0 1px 2px 0 rgba(0,0,0,.1);
         }
       }
     }
