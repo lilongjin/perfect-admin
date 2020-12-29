@@ -3,20 +3,6 @@
     <div class="content_header">
       <span>{{header_title}}</span>
     </div>
-    <div class="mode_list">
-      <el-select v-model="category_id" placeholder="请选择商品分类">
-        <el-option
-          v-for="item in category_list"
-          :key="item.category_id"
-          :label="item.category_name"
-          :value="item.category_id">
-        </el-option>
-      </el-select>
-      <el-button type="success" style="margin-left: 1rem" @click="ubdate()">查询
-      </el-button>
-      <el-button type="success" style="float: right;" @click="edit()">新增商品
-      </el-button>
-    </div>
     <div class="blog_list">
       <div class="blog_list_header">
         <p>商品名称</p>
@@ -26,7 +12,7 @@
         <p>操作</p>
       </div>
       <div class="blog_box">
-        <div class="blog" v-for="item in content_list_data.goods_list">
+        <div class="blog" v-for="item in content_list_data.goods_list" v-if="item.hot_status">
           <p>{{item.title}}</p>
           <p>
             <img v-if="item.img_list.length != 0" :src="item.img_list[0].url" alt="" style="width: 100px;height: 100px;margin-top: 10px">
@@ -90,7 +76,7 @@
                 :action="upload_url"
                 accept=".png,.jpg"
                 :on-success="uploads"
-                >
+              >
                 <el-button size="small" type="primary">点击上传</el-button>
                 <div slot="tip" class="el-upload__tip">仅支持上传jpg/png格式图片</div>
               </el-upload>
@@ -139,12 +125,6 @@
           goods_list: [],
         },
         header_title: "",
-        category_list: [
-          {
-            category_id: "",
-            category_name: "全部",
-          },
-        ],
         category_id: '',
         page: 1,
         form_category_list:[],
@@ -178,9 +158,6 @@
       }).then((res) => {
         this.form_category_list = res.data;
         var category_data = res.data;
-        category_data.map((item) => {
-          this.category_list.push(item)
-        })
       }).catch((error) => {
         console.log(error);
       });
@@ -398,12 +375,6 @@
     background-color: white;
     font-weight: 600;
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .1);
-  }
-
-  .mode_list {
-    width: 100%;
-    float: left;
-    margin-top: 1.5%;
   }
 
   .blog_list {

@@ -2,7 +2,7 @@
 	<div>
 		<div class="content_header">
 			<span>{{header_title}}</span>
-			<el-button type="success" size="mini" style="float: right;height:2rem;margin: .5rem;" @click="edit()">新增分类</el-button>
+			<el-button type="success" style="float: right;" @click="edit()">新增分类</el-button>
 		</div>
 		<div class="blog_list">
 			<div class="blog_list_header">
@@ -13,7 +13,7 @@
 				</p>
 			</div>
 			<div class="blog_box">
-				<div class="blog" v-for="item in content_list">
+				<div class="blog" v-for="item in category_list">
 					<p>{{item.category_name}}</p>
 					<p>{{item.category_id}}</p>
 					<p>
@@ -22,7 +22,7 @@
 					</p>
 				</div>
 			</div>
-			<div v-if="content_list.length == 0" style="line-height: 3rem;text-align: center;">暂无数据！</div>
+			<div v-if="category_list.length == 0" style="line-height: 3rem;text-align: center;">暂无数据！</div>
 		</div>
 	</div>
 </template>
@@ -30,89 +30,139 @@
 	export default {
 		data() {
 			return {
-				centerDialogVisible: false,
-				content_list: [],
-				header_title:""
+        category_list: [],
+				header_title: ""
 			}
 		},
 		created: function() {
-			this.get_content_list();
+			this.get_category_list();
 			var ac_title = sessionStorage.getItem("ac_title");
-			if(ac_title && ac_title !=""){
-			  this.header_title = ac_title;
-			}else{
-			  this.header_title = "后台首页";
+			if (ac_title && ac_title != "") {
+				this.header_title = ac_title;
+			} else {
+				this.header_title = "后台首页";
 			};
 		},
 		methods: {
-			get_content_list() {
+			get_category_list() {
 				//获取全部分类
 				this.$axios({
 					method: 'post',
-					url: 'https://perfect.lilongjin.cn/admin/category_list',
+					url: 'https://perfect.lilongjin.cn/admin/category/list',
 					data: {}
 				}).then((res) => {
-					this.content_list = res.data;
+					this.category_list = res.data;
 				}).catch((error) => {
 					console.log(error);
 				});
 			},
 			edit(id) {
-				// this.centerDialogVisible = true;
-				// alert(id)
-				 this.$prompt('请输入邮箱', '提示', {
-				          confirmButtonText: '确定',
-				          cancelButtonText: '取消',
-				          inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
-				          inputErrorMessage: '邮箱格式不正确'
-				        }).then(({ value }) => {
-				          this.$message({
-				            type: 'success',
-				            message: '你的邮箱是: ' + value
-				          });
-				        }).catch(() => {
-				          this.$message({
-				            type: 'info',
-				            message: '取消输入'
-				          });       
-				        });
+				if (id && id != "") {
+					this.$prompt('请输入新分类名称', '修改分类', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+					}).then(({
+						value
+					}) => {
+						this.$axios({
+							method: 'post',
+							url: 'https://perfect.lilongjin.cn/admin/category/edit',
+							data: this.qs.stringify({
+								category_name: value,
+								category_id: id
+							})
+						}).then((res) => {
+							if (res.data.code == 0) {
+								this.$message({
+									showClose: true,
+									duration: 2000,
+									message: res.data.message,
+									type: 'success'
+								});
+								this.get_category_list()
+							} else {
+								this.$message({
+									showClose: true,
+									duration: 2000,
+									message: res.data.message,
+									type: 'error'
+								});
+							};
+						}).catch((error) => {
+							console.log(error);
+						});
+
+					});
+				} else {
+					this.$prompt('请输入新分类名称', '新增分类', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+					}).then(({
+						value
+					}) => {
+						this.$axios({
+							method: 'post',
+							url: 'https://perfect.lilongjin.cn/admin/category/add',
+							data: this.qs.stringify({
+								name: value,
+							})
+						}).then((res) => {
+							if (res.data.code == 0) {
+								this.$message({
+									showClose: true,
+									duration: 2000,
+									message: res.data.message,
+									type: 'success'
+								});
+								this.get_category_list()
+							} else {
+								this.$message({
+									showClose: true,
+									duration: 2000,
+									message: res.data.message,
+									type: 'error'
+								});
+							};
+						}).catch((error) => {
+							console.log(error);
+						});
+
+					});
+				}
 			},
 			deletes(id) {
-				this.$confirm('此操作将永久删除该文章并且不可恢复, 是否继续?', '提示', {
+				this.$confirm('此操作将永久删除该分类和当前分类下所有商品且不可恢复，是否继续？', '危险操作提示', {
 					confirmButtonText: '确定',
 					cancelButtonText: '取消',
 					type: 'warning'
 				}).then(() => {
 					this.$axios({
 						method: 'post',
-						url: 'http://zhiyun_server.lilongjin.cn/api/content/delete',
+						url: 'https://perfect.lilongjin.cn/admin/category/delete',
 						data: this.qs.stringify({
-							contentid: id,
+							category_id: id,
 						})
 					}).then((res) => {
-						if (res) {
+						if (res.data.code == 0) {
 							this.$message({
 								showClose: true,
-								message: res.data,
+								duration: 2000,
+								message: res.data.message,
 								type: 'success'
 							});
-							this.get_content_list();
+              this.get_category_list()
 						} else {
 							this.$message({
 								showClose: true,
-								message: "删除失败，该内容不存在",
+								duration: 2000,
+								message: res.data.message,
 								type: 'error'
 							});
-						}
+						};
 					}).catch((error) => {
 						console.log(error);
 					});
-				}).catch(() => {
-					this.$message({
-						type: 'info',
-						message: '已取消删除'
-					});
-				});
+				}).catch(() => {});
 			},
 			prev_page() {
 				this.page--;
@@ -151,11 +201,13 @@
 		float: left;
 		margin-top: 1%;
 		box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.1);
+
 		.blog_list_header {
 			width: 100%;
 			height: 3rem;
 			float: left;
 			border-bottom: 1px solid @color_bg;
+			background-color: #F5F7FA;
 
 			p {
 				float: left;
@@ -171,7 +223,7 @@
 			}
 
 			p:nth-child(2) {
-				width: 30%;
+				width: 60%;
 			}
 
 			p:nth-child(3) {
@@ -210,7 +262,10 @@
 				}
 
 				p:nth-child(2) {
-					width: 30%;
+					width: 60%;
+					box-sizing: border-box;
+					border-left: 1px solid #F5F7FA;
+					border-right: 1px solid #F5F7FA;
 				}
 
 				p:nth-child(3) {
