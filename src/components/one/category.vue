@@ -51,7 +51,7 @@
 					url: 'https://perfect.lilongjin.cn/admin/category/list',
 					data: {}
 				}).then((res) => {
-					this.category_list = res.data;
+					this.category_list = res.data.category_list;
 				}).catch((error) => {
 					console.log(error);
 				});
@@ -131,38 +131,57 @@
 				}
 			},
 			deletes(id) {
-				this.$confirm('此操作将永久删除该分类和当前分类下所有商品且不可恢复，是否继续？', '危险操作提示', {
-					confirmButtonText: '确定',
-					cancelButtonText: '取消',
-					type: 'warning'
-				}).then(() => {
-					this.$axios({
-						method: 'post',
-						url: 'https://perfect.lilongjin.cn/admin/category/delete',
-						data: this.qs.stringify({
-							category_id: id,
-						})
-					}).then((res) => {
-						if (res.data.code == 0) {
-							this.$message({
-								showClose: true,
-								duration: 2000,
-								message: res.data.message,
-								type: 'success'
-							});
-              this.get_category_list()
-						} else {
-							this.$message({
-								showClose: true,
-								duration: 2000,
-								message: res.data.message,
-								type: 'error'
-							});
-						};
-					}).catch((error) => {
-						console.log(error);
-					});
-				}).catch(() => {});
+				this.$axios({
+				  method: 'post',
+				  url: 'https://perfect.lilongjin.cn/admin/goods/list',
+				  data: this.qs.stringify({
+				    category_id: id
+				  })
+				}).then((res) => {
+				  if(res.data.goods_list_data.goods_list.length != 0){
+					  this.$message({
+					  	showClose: true,
+					  	duration: 2000,
+					  	message: "删除失败，该分类下还有商品，不能删除",
+					  	type: 'error'
+					  });
+				  } else {
+					  this.$confirm('此操作将永久删除该分类且不可恢复，是否继续？', '危险操作提示', {
+					  	confirmButtonText: '确定',
+					  	cancelButtonText: '取消',
+					  	type: 'warning'
+					  }).then(() => {
+					  	this.$axios({
+					  		method: 'post',
+					  		url: 'https://perfect.lilongjin.cn/admin/category/delete',
+					  		data: this.qs.stringify({
+					  			category_id: id,
+					  		})
+					  	}).then((res) => {
+					  		if (res.data.code == 0) {
+					  			this.$message({
+					  				showClose: true,
+					  				duration: 2000,
+					  				message: res.data.message,
+					  				type: 'success'
+					  			});
+					  	this.get_category_list()
+					  		} else {
+					  			this.$message({
+					  				showClose: true,
+					  				duration: 2000,
+					  				message: res.data.message,
+					  				type: 'error'
+					  			});
+					  		};
+					  	}).catch((error) => {
+					  		console.log(error);
+					  	});
+					  }).catch(() => {});
+				  }
+				}).catch((error) => {
+				  console.log(error);
+				});
 			},
 			prev_page() {
 				this.page--;
@@ -200,6 +219,7 @@
 		width: 100%;
 		float: left;
 		margin-top: 1%;
+		padding-bottom: 1rem;
 		box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.1);
 
 		.blog_list_header {

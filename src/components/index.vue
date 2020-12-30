@@ -14,7 +14,7 @@
 				</div>
 				<ul>
 					<li v-bind:class="{'ac':ac_index==0}" @click="jump('home','后台首页','0')"><span class="el-icon-s-home"></span>后台首页</li>
-					<li v-bind:class="{'ac':ac_index==1}" @click="jump('category','商品分类管理','1')"><span class="el-icon-notebook-2"></span>商品分类管理</li>
+					<li v-bind:class="{'ac':ac_index==1}" @click="jump('category','分类管理','1')"><span class="el-icon-notebook-2"></span>分类管理</li>
 					<li v-bind:class="{'ac':ac_index==2}" @click="jump('goods','全部商品列表','2')"><span class="el-icon-s-goods"></span>全部商品列表</li>
 					<li v-bind:class="{'ac':ac_index==3}" @click="jump('banner_list','轮播商品管理','3')"><span class="el-icon-picture"></span>轮播商品管理</li>
 					<li v-bind:class="{'ac':ac_index==4}" @click="jump('hot_list','推荐商品管理','4')"><span class="el-icon-magic-stick"></span>推荐商品管理</li>

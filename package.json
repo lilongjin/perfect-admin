@@ -1,7 +1,7 @@
 {
-  "name": "zhiyun-admin",
+  "name": "perfect-admin",
   "version": "1.0.0",
-  "description": "智云社区后台管理系统",
+  "description": "perfect-admin",
   "author": "lilongjin <aa462727895@qq.com>",
   "private": true,
   "scripts": {
@@ -17,7 +17,7 @@
     "vue": "^2.5.2",
     "vue-router": "^3.1.3",
     "vuex": "^3.1.2",
-    "wangeditor": "^3.1.1"
+    "wangeditor": "^4.6.0"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
