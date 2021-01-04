@@ -16,7 +16,7 @@
         <div class="blog" v-for="item in goods_list">
           <p>{{item.title}}</p>
           <p>
-            <img v-if="item.img_list.length != 0" :src="item.img_list[0]" alt="" style="width: 100px;height: 100px;margin-top: 10px">
+            <img v-if="item.img_list.length != 0" :src="item.img_list[0].url" alt="" style="width: 100px;height: 100px;margin-top: 10px">
             <span v-if="item.img_list.length == 0">暂无</span>
           </p>
           <p>￥{{item.price}}元</p>

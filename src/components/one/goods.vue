@@ -26,7 +26,7 @@
 				<div class="blog" v-for="item in content_list_data.goods_list">
 					<p>{{item.title}}</p>
 					<p>
-						<img v-if="item.img_list.length != 0" :src="item.img_list[0]" alt="" style="width: 100px;height: 100px;margin-top: 10px">
+						<img v-if="item.img_list.length != 0" :src="item.img_list[0].url" alt="" style="width: 100px;height: 100px;margin-top: 10px">
 						<span v-if="item.img_list.length == 0">暂无</span>
 					</p>
 					<p>￥{{item.price}}元</p>
@@ -71,20 +71,20 @@
 						<el-form-item label="商品轮播图">
 							<div class="goods_banner">
 								<div v-for="(item,index) in form_data.img_list" :key="item.id">
-									<img :src="item" alt="">
-									<p @click="remove(index)">删除</p>
+									<img :src="item.url" alt="">
+									<p @click="remove(index,item.path)">删除</p>
 								</div>
 							</div>
-							<!-- <el-upload class="upload-demo" action="https://perfect.lilongjin.cn/admin/goods_banner_add" accept=".png,.jpg"
+							<el-upload class="upload-demo" action="https://perfect.lilongjin.cn/admin/goods_banner_add" accept=".png,.jpg"
 							 :on-success="uploads">
 								<el-button size="small" type="primary">点击上传</el-button>
 								<div slot="tip" class="el-upload__tip">支持上传jpg/png格式图片，最大不得超过2MB</div>
-							</el-upload> -->
-							<el-upload class="upload-demo" action="#" :http-request="httpRequest" :show-file-list="false" accept=".png,.jpg"
+							</el-upload>
+							<!-- <el-upload class="upload-demo" action="#" :http-request="httpRequest" :show-file-list="false" accept=".png,.jpg"
 							 :before-upload="beforeUpload">
 								<el-button size="small" type="primary">点击上传</el-button>
 								<div slot="tip" class="el-upload__tip">支持上传jpg/png格式图片，最大不得超过2MB</div>
-							</el-upload>
+							</el-upload> -->
 						</el-form-item>
 						<el-form-item label="商品上架状态">
 							<el-switch v-model="form_data.show_status" active-text="上架" inactive-text="不上架">
@@ -169,9 +169,20 @@
 			});
 		},
 		methods: {
-			remove(index) {
+			remove(index,path) {
 				// console.log(index);
 				this.form_data.img_list.splice(index, 1);
+				this.$axios({
+					method: 'post',
+					url: 'https://perfect.lilongjin.cn/admin/goods_banner_del',
+					data: this.qs.stringify({
+						path: path
+					})
+				}).then((res) => {
+					// console.log(res);
+				}).catch((error) => {
+					console.log(error);
+				});
 			},
 			open(id) {
 				this.form_data = {
@@ -204,11 +215,11 @@
 					this.editor.config.uploadImgAccept = ['jpg', 'jpeg', 'png', 'gif', 'bmp']
 					this.editor.config.uploadImgMaxSize = 2 * 1024 * 1024 // 2M
 					this.editor.config.uploadImgShowBase64 = true;
-					this.editor.config.height = 800;
+					this.editor.config.height = 500;
 					this.editor.create(); // 创建富文本实例
 					//设置编辑器默认内容
 					if (this.form_data.content == "") {
-						this.editor.txt.html('<p>请在此编辑商品详情内容......</p>')
+						this.editor.txt.html('<p>商品详情内容</p>')
 					} else {
 						this.editor.txt.html(this.form_data.content)
 					}
@@ -301,46 +312,46 @@
 					});
 				}).catch(() => {});
 			},
-			// uploads(res) {
-			// 	if (res && res.url != "") {
-			// 		this.$message({
-			// 			duration: 2000,
-			// 			showClose: true,
-			// 			message: "上传成功",
-			// 			type: 'success'
-			// 		});
-			// 		this.form_data.img_list.push(res);
-			// 	} else {
-			// 		this.$message({
-			// 			duration: 2000,
-			// 			showClose: true,
-			// 			message: "上传失败",
-			// 			type: 'error'
-			// 		});
+			uploads(res) {
+				if (res && res.url != "") {
+					this.$message({
+						duration: 2000,
+						showClose: true,
+						message: "上传成功",
+						type: 'success'
+					});
+					this.form_data.img_list.push(res);
+				} else {
+					this.$message({
+						duration: 2000,
+						showClose: true,
+						message: "上传失败",
+						type: 'error'
+					});
+				}
+			},
+			// beforeUpload(file) {
+			// 	const isLt2M = file.size / 1024 / 1024 < 2;
+			// 	if (!isLt2M) {
+			// 		this.$message.error('上传图片大小不能超过 2MB!');
+			// 	}
+			// 	return isLt2M;
+			// },
+			// httpRequest(data) {
+			// 	let _this = this
+			// 	let rd = new FileReader() // 创建文件读取对象
+			// 	let file = data.file
+			// 	rd.readAsDataURL(file) // 文件读取装换为base64类型
+			// 	rd.onloadend = function(e) {
+			// 		// console.log(this.result)
+			// 		if (_this.form_data.img_list.length >3) {
+			// 			_this.$message.error('超出上限，每个商品最多可上传四张轮播图!');
+			// 		} else{
+			// 			_this.form_data.img_list.push(this.result);
+			// 		}
+					
 			// 	}
 			// },
-			beforeUpload(file) {
-				const isLt2M = file.size / 1024 / 1024 < 2;
-				if (!isLt2M) {
-					this.$message.error('上传图片大小不能超过 2MB!');
-				}
-				return isLt2M;
-			},
-			httpRequest(data) {
-				let _this = this
-				let rd = new FileReader() // 创建文件读取对象
-				let file = data.file
-				rd.readAsDataURL(file) // 文件读取装换为base64类型
-				rd.onloadend = function(e) {
-					// console.log(this.result)
-					if (_this.form_data.img_list.length >3) {
-						_this.$message.error('超出上限，每个商品最多可上传四张轮播图!');
-					} else{
-						_this.form_data.img_list.push(this.result);
-					}
-					
-				}
-			},
 			content_list() {
 				//获取商品列表
 				this.$axios({
@@ -353,6 +364,7 @@
 				}).then((res) => {
 					// console.log(res.data)
 					this.content_list_data = res.data.goods_list_data;
+					// console.log(this.content_list_data)
 				}).catch((error) => {
 					console.log(error);
 				});
